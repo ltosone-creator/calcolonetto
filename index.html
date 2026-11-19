@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalcoloNetto - Simulatore Interesse Composto e Rendimento BTP / ETF</title>
+    <meta name="description" content="Calcola gratuitamente il rendimento netto dei tuoi investimenti con interesse composto, versamenti mensili e tassazione italiana al 12,5% (BTP) o 26% (ETF/Azioni).">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --green: #16a34a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; }
+        header { background: var(--primary); color: white; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        header .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        header .logo span { color: #38bdf8; }
+        nav a { color: #cbd5e1; text-decoration: none; margin-left: 1.5rem; font-size: 0.95rem; }
+        nav a:hover { color: white; }
+
+        .container { max-width: 1050px; margin: 2rem auto; padding: 0 1.2rem; }
+        
+        /* Spazio Banner Pubblicitario Top (AdSense Ready) */
+        .ad-slot {
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            color: var(--muted);
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        h1 { font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .subtitle { color: var(--muted); margin-bottom: 2rem; font-size: 1.05rem; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--card); padding: 1.8rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.95rem; }
+        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); }
+
+        button {
+            width: 100%; padding: 0.9rem; background: var(--accent); color: white;
+            border: none; border-radius: 8px; font-size: 1.05rem; font-weight: 700;
+            cursor: pointer; transition: background 0.2s; margin-top: 0.5rem;
+        }
+        button:hover { background: var(--accent-hover); }
+
+        .result-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; }
+        .result-title { font-size: 0.9rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+        .result-big { font-size: 2.2rem; font-weight: 800; color: var(--green); margin: 0.3rem 0; }
+        
+        .stat-row { display: flex; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        .stat-row:last-child { border-bottom: none; }
+
+        /* Box Affiliazione ad alta conversione */
+        .affiliate-box {
+            background: #eff6ff; border: 1px solid #bfdbfe; padding: 1.2rem;
+            border-radius: 8px; margin-top: 1.5rem;
+        }
+        .affiliate-box h3 { font-size: 1rem; color: var(--primary); margin-bottom: 0.4rem; }
+        .affiliate-box p { font-size: 0.88rem; color: var(--text); margin-bottom: 0.8rem; }
+        .affiliate-btn {
+            display: inline-block; background: var(--primary); color: white;
+            padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;
+            font-size: 0.85rem; font-weight: 600;
+        }
+
+        .seo-article { margin-top: 3rem; background: var(--card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); }
+        .seo-article h2 { color: var(--primary); margin: 1.5rem 0 0.8rem; font-size: 1.4rem; }
+        .seo-article h2:first-child { margin-top: 0; }
+        .seo-article p { margin-bottom: 1rem; color: #334155; }
+
+        footer { margin-top: 4rem; padding: 2rem; background: var(--primary); color: #94a3b8; text-align: center; font-size: 0.85rem; }
+        footer a { color: #cbd5e1; margin: 0 0.8rem; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Calcolo<span>Netto</span></div>
+    <nav>
+        <a href="#calcolatore">Calcolatore</a>
+        <a href="#guida">Guida Fiscale</a>
+        <a href="#privacy">Privacy</a>
+    </nav>
+</header>
+
+<div class="container">
+    <!-- SPAZIO BANNER PUBBLICITARIO 1 (Incollerai qui il codice AdSense) -->
+    <div class="ad-slot">Spazio Pubblicitario Responsivo (728x90 / Auto)</div>
+
+    <h1 id="calcolatore">Calcolatore Interesse Composto e Rendimento Netto</h1>
+    <p class="subtitle">Simula la crescita del tuo capitale nel tempo calcolando automaticamente le tasse italiane su BTP, ETF, Azioni e Conti Deposito.</p>
+
+    <div class="grid">
+        <!-- INPUT -->
+        <div class="card">
+            <div class="form-group">
+                <label for="capitale">Capitale Iniziale (€)</label>
+                <input type="number" id="capitale" value="10000" min="0" step="100">
+            </div>
+            <div class="form-group">
+                <label for="mensile">Versamento Mensile (€)</label>
+                <input type="number" id="mensile" value="250" min="0" step="50">
+            </div>
+            <div class="form-group">
+                <label for="anni">Durata dell'investimento (Anni)</label>
+                <input type="number" id="anni" value="15" min="1" max="50">
+            </div>
+            <div class="form-group">
+                <label for="tasso">Rendimento Annuo Lordo stimato (%)</label>
+                <input type="number" id="tasso" value="6.5" min="0" max="100" step="0.1">
+            </div>
+            <div class="form-group">
+                <label for="tassazione">Regime Fiscale (Tassazione Rendite)</label>
+                <select id="tassazione">
+                    <option value="0.26">26% - ETF, Azioni, Conti Deposito, Crypto</option>
+                    <option value="0.125">12,5% - Titoli di Stato (BTP, BOT) e White List</option>
+                    <option value="0">0% - Simulazione Lorda (Senza Tasse)</option>
+                </select>
+            </div>
+            <button onclick="calcola()">Calcola Rendimento Netto</button>
+        </div>
+
+        <!-- RISULTATI -->
+        <div class="card">
+            <div class="result-box">
+                <div class="result-title">Capitale Finale Netto</div>
+                <div class="result-big" id="res-finale">€ 83.412,50</div>
+                <small id="res-note" style="color: #15803d;">Al netto delle imposte sul capital gain</small>
+            </div>
+
+            <div class="stat-row">
+                <span>Totale Capitale Versato:</span>
+                <strong id="res-versato">€ 55.000,00</strong>
+            </div>
+            <div class="stat-row">
+                <span>Interessi Lordi Generati:</span>
+                <strong id="res-lordi">€ 38.395,27</strong>
+            </div>
+            <div class="stat-row">
+                <span>Imposte trattenute dallo Stato:</span>
+                <strong id="res-tasse" style="color: #dc2626;">- € 9.982,77</strong>
+            </div>
+            <div class="stat-row">
+                <span>Guadagno Netto Reale:</span>
+                <strong id="res-netti" style="color: var(--green);">+ € 28.412,50</strong>
+            </div>
+
+            <!-- BOX AFFILIAZIONE (Guadagno diretto per apertura conto/broker) -->
+            <div class="affiliate-box">
+                <h3>💡 Vuoi mettere a frutto questi risparmi?</h3>
+                <p>Confronta i migliori conti deposito e broker regolamentati a zero commissioni per iniziare il tuo piano di accumulo.</p>
+                <a href="#" class="affiliate-btn" rel="nofollow sponsored">Confronta le offerte 2026 →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPAZIO BANNER PUBBLICITARIO 2 -->
+    <div class="ad-slot" style="margin-top: 2rem;">Spazio Pubblicitario In-Article (Alta Visibilità)</div>
+
+    <!-- CONTENUTO TESTUALE PER INDICIZZAZIONE GOOGLE (SEO) -->
+    <article class="seo-article" id="guida">
+        <h2>Come funziona il calcolo dell'interesse composto netto in Italia?</h2>
+        <p>L'interesse composto è il meccanismo finanziario in cui gli interessi maturati vengono reinvestiti, generando a loro volta nuovi interessi nel corso degli anni. A differenza dei semplici calcolatori anglosassoni, questo strumento applica la normativa fiscale italiana vigente per mostrarti la cifra reale che ti resterà in tasca.</p>
+
+        <h2>Differenza tra tassazione al 12,5% e al 26%</h2>
+        <p>In Italia i guadagni finanziari (capital gain e dividendi) sono soggetti a due diverse aliquote sostitutive:</p>
+        <p><strong>Aliquota agevolata al 12,5%:</strong> Si applica ai Titoli di Stato italiani (BTP, BOT, CCT) ed esteri appartenenti alla cosiddetta White List (come i Treasury USA o i Bund tedeschi).</p>
+        <p><strong>Aliquota ordinaria al 26%:</strong> Si applica alla maggior parte degli altri strumenti finanziari, tra cui azioni singole, ETF, fondi comuni di investimento, obbligazioni societarie e interessi maturati sui conti deposito bancari.</p>
+    </article>
+</div>
+
+<footer id="privacy">
+    <p>&copy; 2026 CalcoloNetto - Tutti i diritti riservati. Le simulazioni hanno scopo puramente informativo e non costituiscono consulenza finanziaria.</p>
+    <p style="margin-top: 0.5rem;">
+        <a href="#">Privacy Policy</a> | <a href="#">Cookie Policy</a> | <a href="#">Contatti</a>
+    </p>
+</footer>
+
+<script>
+    function formatEuro(num) {
+        return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(num);
+    }
+
+    function calcola() {
+        const capitaleIniziale = parseFloat(document.getElementById('capitale').value) || 0;
+        const versamentoMensile = parseFloat(document.getElementById('mensile').value) || 0;
+        const anni = parseInt(document.getElementById('anni').value) || 1;
+        const tassoAnnuo = (parseFloat(document.getElementById('tasso').value) || 0) / 100;
+        const aliquotaTasse = parseFloat(document.getElementById('tassazione').value) || 0;
+
+        const mesi = anni * 12;
+        const tassoMensile = Math.pow(1 + tassoAnnuo, 1 / 12) - 1;
+
+        let montanteLordo = capitaleIniziale;
+        for (let i = 0; i < mesi; i++) {
+            montanteLordo = (montanteLordo + versamentoMensile) * (1 + tassoMensile);
+        }
+
+        const totaleVersato = capitaleIniziale + (versamentoMensile * mesi);
+        const interessiLordi = Math.max(0, montanteLordo - totaleVersato);
+        const tassePagate = interessiLordi * aliquotaTasse;
+        const interessiNetti = interessiLordi - tassePagate;
+        const capitaleFinaleNetto = totaleVersato + interessiNetti;
+
+        document.getElementById('res-finale').innerText = formatEuro(capitaleFinaleNetto);
+        document.getElementById('res-versato').innerText = formatEuro(totaleVersato);
+        document.getElementById('res-lordi').innerText = formatEuro(interessiLordi);
+        document.getElementById('res-tasse').innerText = "- " + formatEuro(tassePagate);
+        document.getElementById('res-netti').innerText = "+ " + formatEuro(interessiNetti);
+    }
+
+    window.onload = calcola;
+</script>
+
+</body>
+</html>
